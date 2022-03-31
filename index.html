@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Linear Equations solver</title>
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body>
+    <div class="root">
+      <h1 class="main-heading">SOLVE LINEAR EQUATIONS NUMERICALLY</h1>
+
+      <form class="form">
+        <fieldset class="form__fieldset">
+          <legend>Gauss Seidel's Method</legend>
+          <label class="form__label">Input:</label>
+          <p>Enter input in the form of matrix</p>
+          <div class="form__matrix-size-selector">
+            <label for="matrix-size">Select matrix size</label>
+            <select
+              name="matrix-size"
+              id="matrix-size"
+              onchange="handleSizeChange(event)"
+            >
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div class="equation-input">
+            <div class="equation-input__matrix-input" id="matrix-input"></div>
+            <p>=</p>
+            <div class="equation-input__vector-input" id="vector-input"></div>
+            <div class="equation-input__inputted-equation">
+              <h4 class="equation-input__inputted-equation-heading">
+                Your equation:
+              </h4>
+              <p
+                class="equation-input__inputted-equation-value"
+                id="equation-input__inputted-equation-value"
+              ></p>
+            </div>
+          </div>
+          <div class="equation-form">
+            <p>ax = b</p>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+
+    <script src="./index.js"></script>
+  </body>
+</html>

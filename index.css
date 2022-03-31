@@ -1,0 +1,107 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.root {
+  padding: 3rem;
+}
+
+.main-heading {
+  text-align: center;
+}
+
+.form__fieldset {
+  border: 1px solid gray;
+}
+
+.form__label {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.form__matrix-size-selector {
+  margin-top: 1rem;
+}
+
+.equation-input {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  grid-template-columns: 2fr 0.2fr 0.6fr 1fr;
+  justify-items: center;
+}
+
+.equation-input__matrix-input {
+  display: grid;
+  row-gap: 1rem;
+  justify-items: center;
+  max-width: 15rem;
+  min-width: 10rem;
+  justify-self: end;
+}
+
+.equation-input__matrix-input--size-2x2 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.equation-input__matrix-input--size-3x3 {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.equation-input__vector-input {
+  display: grid;
+  row-gap: 1rem;
+  justify-items: center;
+  justify-self: start;
+}
+
+.equation-input__vector-input--size-2 {
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.equation-input__vector-input--size-3 {
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.equation-input__matrix-input__box,
+.equation-input__vector-input__box {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0;
+  border: 1px solid black;
+  text-align: center;
+  outline: none;
+}
+
+.equation-input__matrix-input__box:focus,
+.equation-input__vector-input__box:focus {
+  outline: 1px solid black;
+}
+
+.equation-input__inputted-equation {
+  justify-self: end;
+  align-self: flex-start;
+}
+
+.equation-input__inputted-equation-value {
+  display: flex;
+  flex-direction: column;
+}
+
+.equation-form {
+  text-align: center;
+  margin-top: 1rem;
+}
