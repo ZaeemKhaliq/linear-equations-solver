@@ -47,16 +47,33 @@ input::-webkit-inner-spin-button {
   max-width: 15rem;
   min-width: 10rem;
   justify-self: end;
+  align-items: center;
 }
 
 .equation-input__matrix-input--size-2x2 {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 0.5fr 1fr;
   grid-template-rows: repeat(2, 1fr);
 }
 
 .equation-input__matrix-input--size-3x3 {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 0.5fr 1fr 0.5fr 1fr;
   grid-template-rows: repeat(3, 1fr);
+}
+
+.equation-input__operator {
+  border-radius: 0;
+  outline: none;
+  border: 1px solid black;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
+  font-size: 1.2rem;
+  padding-left: 0.2rem;
+  padding-right: 0.2rem;
+}
+
+.equation-input__operator:focus {
+  outline: 1px solid black;
 }
 
 .equation-input__vector-input {
@@ -104,4 +121,22 @@ input::-webkit-inner-spin-button {
 .equation-form {
   text-align: center;
   margin-top: 1rem;
+}
+
+@media screen and (max-width: 500px) {
+  .root {
+    padding: 2rem;
+  }
+
+  .equation-input {
+    grid-template-columns: 1.4fr 0.2fr 0.6fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .equation-input__inputted-equation {
+    align-self: center;
+    width: 100%;
+    grid-column: 1/4;
+    text-align: center;
+  }
 }

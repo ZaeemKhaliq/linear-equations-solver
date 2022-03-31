@@ -21,23 +21,42 @@ const renderMatrixInputs = () => {
     matrixInput.classList.add("equation-input__matrix-input--size-2x2");
     matrixInput.classList.remove("equation-input__matrix-input--size-3x3");
     vectorInput.classList.add("equation-input__vector-input--size-2");
-    vectorInput.classList.remove("equation-input__vector-input--size-2");
+    vectorInput.classList.remove("equation-input__vector-input--size-3");
 
     let inputs = "";
     for (let i = 1; i <= 4; i++) {
       inputs += `
       <div>
-      <input type="number" class="equation-input__matrix-input__box" onchange="handleMatrixInputBox(event,${i})" />
-      <span>x<sub>${i % 2 === 0 ? 2 : i % 2}</sub></span>
+        <input type="number" 
+            class="equation-input__matrix-input__box" 
+            onchange="handleMatrixInputBox(event,${i})" 
+        />
+        <span>x<sub>${i % 2 === 0 ? 2 : i % 2}</sub></span>
       </div>
-        `;
+      ${
+        i % 2 === 1
+          ? `
+      <select name="equation-input__operator" 
+        class="equation-input__operator"
+        onchange="handleOperatorChange(event,${Math.ceil(i / 2)},${i % 2})"
+      >
+        <option value="+">+</option>
+        <option value="-">-</option>
+      </select>
+      `
+          : ""
+      }`;
     }
 
     matrixInput.innerHTML = inputs;
 
     inputs = "";
     for (let i = 1; i <= 2; i++) {
-      inputs += `<input type="number" class="equation-input__vector-input__box" />`;
+      inputs += `
+        <input type="number" 
+            class="equation-input__vector-input__box" 
+            onchange="handleVectorInputBox(event,${i})" 
+        />`;
     }
     vectorInput.innerHTML = inputs;
 
@@ -50,15 +69,31 @@ const renderMatrixInputs = () => {
     matrixInput.classList.add("equation-input__matrix-input--size-3x3");
     matrixInput.classList.remove("equation-input__matrix-input--size-2x2");
     vectorInput.classList.add("equation-input__vector-input--size-3");
-    vectorInput.classList.remove("equation-input__vector-input--size-3");
+    vectorInput.classList.remove("equation-input__vector-input--size-2");
 
     let inputs = "";
     for (let i = 1; i <= 9; i++) {
       inputs += `
       <div>
-      <input type="number" class="equation-input__matrix-input__box" />
-      <span>x<sub>${i % 3 === 0 ? 3 : i % 3}</sub></span>
+        <input type="number" 
+            class="equation-input__matrix-input__box"
+            onchange="handleMatrixInputBox(event,${i})" 
+        />
+        <span>x<sub>${i % 3 === 0 ? 3 : i % 3}</sub></span>
       </div>
+      ${
+        !(i % 3 === 0)
+          ? `
+      <select name="equation-input__operator" 
+      class="equation-input__operator"
+      onchange="handleOperatorChange(event,${Math.ceil(i / 3)},${i % 3})"
+      >
+        <option value="+">+</option>
+        <option value="-">-</option>
+      </select>
+      `
+          : ""
+      }
         `;
     }
 
@@ -66,7 +101,10 @@ const renderMatrixInputs = () => {
 
     inputs = "";
     for (let i = 1; i <= 3; i++) {
-      inputs += `<input type="number" class="equation-input__vector-input__box" />`;
+      inputs += `<input type="number" 
+      class="equation-input__vector-input__box"
+      onchange="handleVectorInputBox(event,${i})" 
+      />`;
     }
     vectorInput.innerHTML = inputs;
 
@@ -78,93 +116,165 @@ const renderMatrixInputs = () => {
   }
 };
 
-let equationSpan1 = [];
-let equationSpan1X1 = [];
-let equationSpan1X2 = [];
-let equationSpan1X3 = [];
-let equationSpan2 = "";
-let equationSpan2X1 = [];
-let equationSpan2X2 = [];
-let equationSpan2X3 = [];
-let equationSpan3 = "";
-let equationSpan3X1 = [];
-let equationSpan3X2 = [];
-let equationSpan3X3 = [];
+let equations = {
+  equationSpan1: [],
+  equationSpan1X1: [],
+  equationSpan1X2: [],
+  equationSpan1X3: [],
+  equationSpan1V1: [],
+  equationSpan1Operator1: "+",
+  equationSpan1Operator2: "+",
+  equationSpan2: [],
+  equationSpan2X1: [],
+  equationSpan2X2: [],
+  equationSpan2X3: [],
+  equationSpan2V1: [],
+  equationSpan2Operator1: "+",
+  equationSpan2Operator2: "+",
+  equationSpan3: [],
+  equationSpan3X1: [],
+  equationSpan3X2: [],
+  equationSpan3X3: [],
+  equationSpan3V1: [],
+  equationSpan3Operator1: "+",
+  equationSpan3Operator2: "+",
+};
 
 const clearEquationSpans = () => {
-  equationSpan1 = [];
-  equationSpan1X1 = [];
-  equationSpan1X2 = [];
-  equationSpan1X3 = [];
-  equationSpan2 = "";
-  equationSpan2X1 = [];
-  equationSpan2X2 = [];
-  equationSpan2X3 = [];
-  equationSpan3 = "";
-  equationSpan3X1 = [];
-  equationSpan3X2 = [];
-  equationSpan3X3 = [];
+  equations = {
+    equationSpan1: [],
+    equationSpan1X1: [],
+    equationSpan1X2: [],
+    equationSpan1X3: [],
+    equationSpan1V1: [],
+    equationSpan1Operator1: "+",
+    equationSpan1Operator2: "+",
+    equationSpan2: [],
+    equationSpan2X1: [],
+    equationSpan2X2: [],
+    equationSpan2X3: [],
+    equationSpan2V1: [],
+    equationSpan2Operator1: "+",
+    equationSpan2Operator2: "+",
+    equationSpan3: [],
+    equationSpan3X1: [],
+    equationSpan3X2: [],
+    equationSpan3X3: [],
+    equationSpan3V1: [],
+    equationSpan3Operator1: "+",
+    equationSpan3Operator2: "+",
+  };
 };
 
 const handleMatrixInputBox = (event, index) => {
+  for (let i = 1; i <= (matrixSize === 2 ? 4 : 9); i++) {
+    if (i === index) {
+      if (!event.target.value.length) {
+        equations[
+          `equationSpan${Math.ceil(index / matrixSize)}X${
+            index % matrixSize === 0 ? matrixSize : index % matrixSize
+          }`
+        ] = [];
+      } else {
+        const str = `${event.target.value}x<sub>${
+          index % matrixSize === 0 ? matrixSize : index % matrixSize
+        }</sub>`;
+
+        for (let j = 0; j < str.length; j++) {
+          equations[
+            `equationSpan${Math.ceil(index / matrixSize)}X${
+              index % matrixSize === 0 ? matrixSize : index % matrixSize
+            }`
+          ][j] = `${str[j]}`;
+        }
+
+        equations[
+          `equationSpan${Math.ceil(index / matrixSize)}X${
+            index % matrixSize === 0 ? matrixSize : index % matrixSize
+          }`
+        ] = equations[
+          `equationSpan${Math.ceil(index / matrixSize)}X${
+            index % matrixSize === 0 ? matrixSize : index % matrixSize
+          }`
+        ].slice(0, str.length);
+      }
+
+      setEquationSpan(Math.ceil(index / matrixSize));
+    } else {
+      continue;
+    }
+  }
+};
+
+const handleVectorInputBox = (event, index) => {
+  for (let i = 1; i <= matrixSize; i++) {
+    if (i === index) {
+      if (!event.target.value.length) {
+        equations[`equationSpan${index}V1`] = [];
+      } else {
+        const str = `${event.target.value}`;
+        for (let j = 0; j < str.length; j++) {
+          equations[`equationSpan${index}V1`][j] = `${str[j]}`;
+        }
+
+        equations[`equationSpan${index}V1`] = equations[
+          `equationSpan${index}V1`
+        ].slice(0, str.length);
+      }
+      setEquationSpan(index);
+    } else {
+      continue;
+    }
+  }
+};
+
+const handleOperatorChange = (event, spanNumber, operatorNumber) => {
+  equations[`equationSpan${spanNumber}Operator${operatorNumber}`] =
+    event.target.value;
+  setEquationSpan(spanNumber);
+};
+
+const setEquationSpan = (spanNumber) => {
   const inputtedEquation = document.getElementById(
     "equation-input__inputted-equation-value"
   );
   const spans = inputtedEquation.children;
 
   if (matrixSize === 2) {
-    if (index === 1) {
-      const str = `${event.target.value}x<sub>1</sub>`;
-      for (let i = 0; i < str.length; i++) {
-        equationSpan1X1[i] = `${str[i]}`;
-      }
+    equations[`equationSpan${spanNumber}`] = [
+      ...equations[`equationSpan${spanNumber}X1`],
+      equations[`equationSpan${spanNumber}X1`].length > 0 &&
+      equations[`equationSpan${spanNumber}X2`].length > 0
+        ? equations[`equationSpan${spanNumber}Operator1`]
+        : "",
+      ...equations[`equationSpan${spanNumber}X2`],
+      equations[`equationSpan${spanNumber}V1`].length ? "=" : "",
+      ...equations[`equationSpan${spanNumber}V1`],
+    ];
 
-      equationSpan1X1 = equationSpan1X1.slice(0, str.length);
+    spans[spanNumber - 1].innerHTML =
+      equations[`equationSpan${spanNumber}`].join("");
+  }
+  if (matrixSize === 3) {
+    equations[`equationSpan${spanNumber}`] = [
+      ...equations[`equationSpan${spanNumber}X1`],
+      equations[`equationSpan${spanNumber}X1`].length > 0 &&
+      equations[`equationSpan${spanNumber}X2`].length > 0
+        ? equations[`equationSpan${spanNumber}Operator1`]
+        : "",
+      ...equations[`equationSpan${spanNumber}X2`],
+      (equations[`equationSpan${spanNumber}X2`].length > 0 &&
+        equations[`equationSpan${spanNumber}X3`].length > 0) ||
+      (equations[`equationSpan${spanNumber}X1`].length > 0 &&
+        equations[`equationSpan${spanNumber}X3`].length > 0)
+        ? equations[`equationSpan${spanNumber}Operator2`]
+        : "",
+      ...equations[`equationSpan${spanNumber}X3`],
+      equations[`equationSpan${spanNumber}V1`].length ? "=" : "",
+      ...equations[`equationSpan${spanNumber}V1`],
+    ];
 
-      equationSpan1 = [...equationSpan1X1, ...equationSpan1X2];
-
-      spans[0].innerHTML = equationSpan1.join("");
-    }
-    if (index === 2) {
-      const str = `${event.target.value}x<sub>2</sub>`;
-      const strLength = str.length;
-
-      for (let i = 0; i < strLength; i++) {
-        equationSpan1X2[i] = `${str[i]}`;
-      }
-
-      equationSpan1X2 = equationSpan1X2.slice(0, strLength);
-
-      equationSpan1 = [...equationSpan1X1, ...equationSpan1X2];
-
-      spans[0].innerHTML = equationSpan1.join("");
-    }
-
-    if (index === 3) {
-      const str = `${event.target.value}x<sub>1</sub>`;
-      for (let i = 0; i < str.length; i++) {
-        equationSpan2X1[i] = `${str[i]}`;
-      }
-
-      equationSpan2X1 = equationSpan2X1.slice(0, str.length);
-
-      equationSpan2 = [...equationSpan2X1, ...equationSpan2X2];
-
-      spans[1].innerHTML = equationSpan2.join("");
-    }
-    if (index === 4) {
-      const str = `${event.target.value}x<sub>2</sub>`;
-      const strLength = str.length;
-
-      for (let i = 0; i < strLength; i++) {
-        equationSpan2X2[i] = `${str[i]}`;
-      }
-
-      equationSpan2X2 = equationSpan2X2.slice(0, strLength);
-
-      equationSpan2 = [...equationSpan2X1, ...equationSpan2X2];
-
-      spans[1].innerHTML = equationSpan2.join("");
-    }
+    spans[spanNumber - 1].innerHTML =
+      equations[`equationSpan${spanNumber}`].join("");
   }
 };
