@@ -201,7 +201,10 @@
 }
 
 .form__result-row--3x3 {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: minmax(4rem, 1fr) minmax(10rem, 1fr) minmax(10rem, 1fr) minmax(
+      10rem,
+      1fr
+    );
 }
 
 @media screen and (max-width: 650px) {
