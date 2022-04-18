@@ -407,6 +407,12 @@ const handleSubmit = () => {
   }
 
   if (matrixSize === 2) {
+    for (const key in equation_2) {
+      if (!equation_2[key].X1 || !equation_2[key].X2 || !equation_2[key].V1) {
+        return alert("Please enter full equations!");
+      }
+    }
+
     const isDiagonallyDominant =
       checkDiagonalDominance(1, {
         X1: equation_2.row1.X1,
@@ -469,6 +475,17 @@ const handleSubmit = () => {
   }
 
   if (matrixSize === 3) {
+    for (const key in equation_3) {
+      if (
+        !equation_3[key].X1 ||
+        !equation_3[key].X2 ||
+        !equation_3[key].X3 ||
+        !equation_3[key].V1
+      ) {
+        return alert("Please enter full equations!");
+      }
+    }
+
     const isDiagonallyDominant =
       checkDiagonalDominance(1, {
         X1: equation_3.row1.X1,
