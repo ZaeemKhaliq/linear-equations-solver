@@ -1,7 +1,21 @@
 let matrixSize = 2;
+let equations = {};
+
+let equationsTypes = {
+  equation_2: {},
+  equation_3: {},
+  equation_4: {},
+  equation_5: {},
+  equation_6: {},
+  equation_7: {},
+  equation_8: {},
+  equation_9: {},
+  equation_10: {},
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   renderMatrixInputs();
+  setEquationsObject();
 });
 
 const handleSizeChange = (event) => {
@@ -18,256 +32,160 @@ const renderMatrixInputs = () => {
     "equation-input__inputted-equation-value"
   );
 
-  if (matrixSize === 2) {
-    equationInput.classList.add("equation-input--size-2x2");
-    equationInput.classList.remove("equation-input--size-3x3");
-    matrixInput.classList.add("equation-input__matrix-input--size-2x2");
-    matrixInput.classList.remove("equation-input__matrix-input--size-3x3");
-    vectorInput.classList.add("equation-input__vector-input--size-2");
-    vectorInput.classList.remove("equation-input__vector-input--size-3");
+  equationInput.className = `equation-input`;
+  matrixInput.className = `equation-input__matrix-input equation-input__matrix-input--size-${matrixSize}x${matrixSize}`;
+  vectorInput.className = `equation-input__vector-input equation-input__vector-input--size-${matrixSize}`;
 
-    let inputs = "";
-    for (let i = 1; i <= 4; i++) {
-      inputs += `
+  let inputs = "";
+  for (let i = 1; i <= Math.pow(matrixSize, 2); i++) {
+    inputs += `
+    ${
+      i % matrixSize === 1
+        ? `<select name="equation-input__operator"
+       class="equation-input__operator"
+       onchange="handleOperatorChange(event,${Math.ceil(i / matrixSize)},${0})"
+     >
+      <option value="+">+</option>
+      <option value="-">-</option>
+     </select>
+    `
+        : ""
+    }
+      <div class="equation-input__matrix-equation">
+        <input type="number" 
+        class="equation-input__matrix-input__box" 
+        onchange="handleMatrixInputBox(event,${i})" 
+        />
+        <span>x<sub>${
+          i % matrixSize === 0 ? matrixSize : i % matrixSize
+        }</sub></span>
+      </div>
+
       ${
-        i % 2 === 1
-          ? `<select name="equation-input__operator"
+        !(i % matrixSize === 0)
+          ? `
+        <select name="equation-input__operator" 
           class="equation-input__operator"
-          onchange="handleOperatorChange(event,${Math.ceil(i / 2)},${0})"
+          onchange="handleOperatorChange(event,${Math.ceil(i / matrixSize)},${
+              i % matrixSize
+            })"
         >
           <option value="+">+</option>
           <option value="-">-</option>
-        </select>`
-          : ""
-      }
-      <div>
-        <input type="number" 
-            class="equation-input__matrix-input__box" 
-            onchange="handleMatrixInputBox(event,${i})" 
-        />
-        <span>x<sub>${i % 2 === 0 ? 2 : i % 2}</sub></span>
-      </div>
-      ${
-        i % 2 === 1
-          ? `
-      <select name="equation-input__operator" 
-        class="equation-input__operator"
-        onchange="handleOperatorChange(event,${Math.ceil(i / 2)},${i % 2})"
-      >
-        <option value="+">+</option>
-        <option value="-">-</option>
-      </select>
+        </select>
       `
           : ""
-      }`;
-    }
+      }
+    `;
+  }
+  matrixInput.innerHTML = inputs;
 
-    matrixInput.innerHTML = inputs;
-
-    inputs = "";
-    for (let i = 1; i <= 2; i++) {
-      inputs += `
+  inputs = "";
+  for (let i = 1; i <= matrixSize; i++) {
+    inputs += `
         <input type="number" 
             class="equation-input__vector-input__box" 
             onchange="handleVectorInputBox(event,${i})" 
         />`;
-    }
-    vectorInput.innerHTML = inputs;
-
-    inputtedEquation.innerHTML = `
-    <span></span>
-    <span></span>
-    `;
   }
-  if (matrixSize === 3) {
-    equationInput.classList.add("equation-input--size-3x3");
-    equationInput.classList.remove("equation-input--size-2x2");
-    matrixInput.classList.add("equation-input__matrix-input--size-3x3");
-    matrixInput.classList.remove("equation-input__matrix-input--size-2x2");
-    vectorInput.classList.add("equation-input__vector-input--size-3");
-    vectorInput.classList.remove("equation-input__vector-input--size-2");
 
-    let inputs = "";
-    for (let i = 1; i <= 9; i++) {
-      inputs += `
-      ${
-        i % 3 === 1
-          ? `<select name="equation-input__operator"
-          class="equation-input__operator"
-          onchange="handleOperatorChange(event,${Math.ceil(i / 3)},${0})"
-        >
-          <option value="+">+</option>
-          <option value="-">-</option>
-        </select>`
-          : ""
-      }
-      <div class="equation-input__input-box-operator">
-        <input type="number" 
-            class="equation-input__matrix-input__box"
-            onchange="handleMatrixInputBox(event,${i})" 
-        />
-        <span>x<sub>${i % 3 === 0 ? 3 : i % 3}</sub></span>
-      </div>
-      ${
-        !(i % 3 === 0)
-          ? `
-      <select name="equation-input__operator" 
-      class="equation-input__operator"
-      onchange="handleOperatorChange(event,${Math.ceil(i / 3)},${i % 3})"
-      >
-        <option value="+">+</option>
-        <option value="-">-</option>
-      </select>
-      `
-          : ""
-      }
-        `;
-    }
+  vectorInput.innerHTML = inputs;
 
-    matrixInput.innerHTML = inputs;
-
-    inputs = "";
-    for (let i = 1; i <= 3; i++) {
-      inputs += `<input type="number" 
-      class="equation-input__vector-input__box"
-      onchange="handleVectorInputBox(event,${i})" 
-      />`;
-    }
-    vectorInput.innerHTML = inputs;
-
-    inputtedEquation.innerHTML = `
-    <span></span>
-    <span></span>
-    <span></span>
-    `;
+  for (let i = 1; i <= matrixSize; i++) {
+    inputtedEquation.innerHTML += `<span></span>`;
   }
+
+  inputtedEquation.innerHTML = `
+  ${Array.from({ length: matrixSize }, (v, i) => {
+    return "<span></span>";
+  }).join("")}
+  `;
 };
 
-let equations = {
-  equationSpan1: [],
-  equationSpan1X1: [],
-  equationSpan1X2: [],
-  equationSpan1X3: [],
-  equationSpan1V1: [],
-  equationSpan1Operator0: "+",
-  equationSpan1Operator1: "+",
-  equationSpan1Operator2: "+",
-  equationSpan2: [],
-  equationSpan2X1: [],
-  equationSpan2X2: [],
-  equationSpan2X3: [],
-  equationSpan2V1: [],
-  equationSpan2Operator0: "+",
-  equationSpan2Operator1: "+",
-  equationSpan2Operator2: "+",
-  equationSpan3: [],
-  equationSpan3X1: [],
-  equationSpan3X2: [],
-  equationSpan3X3: [],
-  equationSpan3V1: [],
-  equationSpan3Operator0: "+",
-  equationSpan3Operator1: "+",
-  equationSpan3Operator2: "+",
+const setEquationsObject = () => {
+  equations = {};
+  for (let i = 1; i <= 10; i++) {
+    Object.defineProperties(equations, {
+      [`equationSpan${i}`]: {
+        value: [],
+        writable: true,
+      },
+      [`equationSpan${i}V1`]: {
+        value: [],
+        writable: true,
+      },
+    });
+    for (let j = 0; j < 10; j++) {
+      Object.defineProperties(equations, {
+        [`equationSpan${i}X${j + 1}`]: {
+          value: [],
+          writable: true,
+        },
+        [`equationSpan${i}Operator${j}`]: {
+          value: "+",
+          writable: true,
+        },
+      });
+    }
+  }
+
+  for (let i = 2; i <= 10; i++) {
+    if (i !== matrixSize) {
+      equationsTypes[`equation_${i}`] = {};
+    }
+  }
+
+  const myObj = equationsTypes[`equation_${matrixSize}`];
+  for (let i = 1; i <= matrixSize; i++) {
+    Object.defineProperty(myObj, `row${i}`, {
+      value: {},
+      writable: true,
+      configurable: true,
+      enumerable: true,
+    });
+  }
+
+  for (let i = 1; i <= matrixSize; i++) {
+    const key = equationsTypes[`equation_${matrixSize}`][`row${i}`];
+
+    Object.defineProperty(key, "V1", {
+      value: null,
+      writable: true,
+    });
+
+    for (let j = 1; j <= matrixSize; j++) {
+      Object.defineProperties(key, {
+        [`X${j}`]: {
+          value: null,
+          writable: true,
+        },
+        [`operator${j - 1}`]: {
+          value: equations[`equationSpan${i}Operator${j - 1}`],
+          writable: true,
+        },
+      });
+    }
+  }
 };
 
 const clearEquationSpans = () => {
-  equations = {
-    equationSpan1: [],
-    equationSpan1X1: [],
-    equationSpan1X2: [],
-    equationSpan1X3: [],
-    equationSpan1V1: [],
-    equationSpan0Operator0: "+",
-    equationSpan1Operator1: "+",
-    equationSpan1Operator2: "+",
-    equationSpan2: [],
-    equationSpan2X1: [],
-    equationSpan2X2: [],
-    equationSpan2X3: [],
-    equationSpan2V1: [],
-    equationSpan2Operator0: "+",
-    equationSpan2Operator1: "+",
-    equationSpan2Operator2: "+",
-    equationSpan3: [],
-    equationSpan3X1: [],
-    equationSpan3X2: [],
-    equationSpan3X3: [],
-    equationSpan3V1: [],
-    equationSpan3Operator0: "+",
-    equationSpan3Operator1: "+",
-    equationSpan3Operator2: "+",
-  };
-};
-
-let equation_2 = {
-  row1: {
-    operator0: equations.equationSpan1Operator0,
-    X1: null,
-    operator: equations.equationSpan1Operator1,
-    X2: null,
-    V1: null,
-  },
-  row2: {
-    operator0: equations.equationSpan1Operator0,
-    X1: null,
-    operator: equations.equationSpan2Operator1,
-    X2: null,
-    V1: null,
-  },
-};
-
-let equation_3 = {
-  row1: {
-    operator0: equations.equationSpan1Operator0,
-    X1: null,
-    operator1: equations.equationSpan1Operator1,
-    X2: null,
-    operator2: equations.equationSpan1Operator2,
-    X3: null,
-    V1: null,
-  },
-  row2: {
-    operator0: equations.equationSpan2Operator0,
-    X1: null,
-    operator1: equations.equationSpan2Operator1,
-    X2: null,
-    operator2: equations.equationSpan2Operator2,
-    X3: null,
-    V1: null,
-  },
-  row3: {
-    operator0: equations.equationSpan3Operator0,
-    X1: null,
-    operator1: equations.equationSpan3Operator1,
-    X2: null,
-    operator2: equations.equationSpan3Operator2,
-    X3: null,
-    V1: null,
-  },
+  setEquationsObject();
 };
 
 const setEquation = (value, rowNum, variableNum, variable) => {
-  if (matrixSize === 2) {
-    equation_2[`row${rowNum}`][`${variable}${variableNum}`] = Number(value);
-  }
-  if (matrixSize === 3) {
-    equation_3[`row${rowNum}`][`${variable}${variableNum}`] = Number(value);
-  }
+  equationsTypes[`equation_${matrixSize}`][`row${rowNum}`][
+    `${variable}${variableNum}`
+  ] = value === "" ? "" : Number(value);
 };
 
 const setEquationOperator = (rowNum, operatorNum, operator) => {
-  if (matrixSize === 2) {
-    equation_2[`row${rowNum}`][
-      `operator${operatorNum == 0 ? operatorNum : ""}`
-    ] = operator;
-  }
-  if (matrixSize === 3) {
-    equation_3[`row${rowNum}`][`operator${operatorNum}`] = operator;
-  }
+  equationsTypes[`equation_${matrixSize}`][`row${rowNum}`][
+    `operator${operatorNum}`
+  ] = operator;
 };
 
 const handleMatrixInputBox = (event, index) => {
-  for (let i = 1; i <= Math.pow(matrixSize, matrixSize); i++) {
+  for (let i = 1; i <= Math.pow(matrixSize, 2); i++) {
     if (i === index) {
       const spanNumber = Math.ceil(index / matrixSize);
       const variableNumber =
@@ -335,53 +253,41 @@ const setEquationSpan = (spanNumber) => {
   );
   const spans = inputtedEquation.children;
 
-  if (matrixSize === 2) {
-    equations[`equationSpan${spanNumber}`] = [
-      equations[`equationSpan${spanNumber}X1`].length > 0
-        ? equations[`equationSpan${spanNumber}Operator0`] === "-"
-          ? equations[`equationSpan${spanNumber}Operator0`]
-          : ""
-        : "",
-      ...equations[`equationSpan${spanNumber}X1`],
-      equations[`equationSpan${spanNumber}X1`].length > 0 &&
-      equations[`equationSpan${spanNumber}X2`].length > 0
-        ? equations[`equationSpan${spanNumber}Operator1`]
-        : "",
-      ...equations[`equationSpan${spanNumber}X2`],
-      equations[`equationSpan${spanNumber}V1`].length ? "=" : "",
-      ...equations[`equationSpan${spanNumber}V1`],
-    ];
+  let expressions = [];
+  for (let i = 0; i < matrixSize; i++) {
+    let expression;
+    if (i === 0) {
+      expression = [
+        equations[`equationSpan${spanNumber}X${i + 1}`].length > 0
+          ? equations[`equationSpan${spanNumber}Operator${i}`] === "-"
+            ? equations[`equationSpan${spanNumber}Operator${i}`]
+            : ""
+          : "",
+        ...equations[`equationSpan${spanNumber}X${i + 1}`],
+      ];
+    } else {
+      expression = [
+        equations[`equationSpan${spanNumber}X${i + 1}`].length > 0
+          ? equations[`equationSpan${spanNumber}Operator${i}`]
+          : "",
+        ...equations[`equationSpan${spanNumber}X${i + 1}`],
+      ];
+    }
 
-    spans[spanNumber - 1].innerHTML =
-      equations[`equationSpan${spanNumber}`].join("");
+    expressions.push(...expression);
   }
-  if (matrixSize === 3) {
-    equations[`equationSpan${spanNumber}`] = [
-      equations[`equationSpan${spanNumber}X1`].length > 0
-        ? equations[`equationSpan${spanNumber}Operator0`] === "-"
-          ? equations[`equationSpan${spanNumber}Operator0`]
-          : ""
-        : "",
-      ...equations[`equationSpan${spanNumber}X1`],
-      equations[`equationSpan${spanNumber}X1`].length > 0 &&
-      equations[`equationSpan${spanNumber}X2`].length > 0
-        ? equations[`equationSpan${spanNumber}Operator1`]
-        : "",
-      ...equations[`equationSpan${spanNumber}X2`],
-      (equations[`equationSpan${spanNumber}X2`].length > 0 &&
-        equations[`equationSpan${spanNumber}X3`].length > 0) ||
-      (equations[`equationSpan${spanNumber}X1`].length > 0 &&
-        equations[`equationSpan${spanNumber}X3`].length > 0)
-        ? equations[`equationSpan${spanNumber}Operator2`]
-        : "",
-      ...equations[`equationSpan${spanNumber}X3`],
-      equations[`equationSpan${spanNumber}V1`].length ? "=" : "",
-      ...equations[`equationSpan${spanNumber}V1`],
-    ];
 
-    spans[spanNumber - 1].innerHTML =
-      equations[`equationSpan${spanNumber}`].join("");
-  }
+  const vectorValue = [
+    equations[`equationSpan${spanNumber}V1`].length ? "=" : "",
+    ...equations[`equationSpan${spanNumber}V1`],
+  ];
+
+  const finalEquation = [...expressions, ...vectorValue];
+
+  equations[`equationSpan${spanNumber}`] = finalEquation;
+
+  spans[spanNumber - 1].innerHTML =
+    equations[`equationSpan${spanNumber}`].join("");
 };
 
 let numberOfIterations;
@@ -406,189 +312,122 @@ const handleSubmit = () => {
     return alert("Please enter number of iterations!");
   }
 
-  if (matrixSize === 2) {
-    for (const key in equation_2) {
-      if (!equation_2[key].X1 || !equation_2[key].X2 || !equation_2[key].V1) {
+  const localEquation = equationsTypes[`equation_${matrixSize}`];
+  const falsyConditions = [null, undefined, ""];
+
+  for (const key in localEquation) {
+    if (falsyConditions.includes(localEquation[key].V1)) {
+      return alert("Please enter full equations!");
+    }
+
+    for (let i = 1; i <= matrixSize; i++) {
+      if (falsyConditions.includes(localEquation[key][`X${i}`])) {
         return alert("Please enter full equations!");
       }
     }
-
-    const isDiagonallyDominant =
-      checkDiagonalDominance(1, {
-        X1: equation_2.row1.X1,
-        X2: equation_2.row1.X2,
-      }) &&
-      checkDiagonalDominance(2, {
-        X1: equation_2.row2.X1,
-        X2: equation_2.row2.X2,
-      });
-
-    if (!isDiagonallyDominant) {
-      return alert("The equations are not diagonally dominant!");
-    }
-
-    let x1, x2;
-
-    const calculateValues = (iterationNum) => {
-      x1 =
-        (equation_2.row1.V1 -
-          (equation_2.row1.operator === "-" ? -1 : +1) *
-            equation_2.row1.X2 *
-            (iterationNum === 0 ? iterationNum : x2)) /
-        ((equation_2.row1.operator0 === "-" ? -1 : +1) * equation_2.row1.X1);
-      x2 =
-        (equation_2.row2.V1 -
-          (equation_2.row2.operator === "-" ? -1 : +1) *
-            equation_2.row2.X1 *
-            x1) /
-        ((equation_2.row2.operator0 === "-" ? -1 : +1) * equation_2.row2.X2);
-
-      return [x1, x2];
-    };
-
-    const formResultContainer = document.getElementById(
-      "form__result-container"
-    );
-    const formResult = document.getElementById("form__result");
-
-    formResult.innerHTML = `
-    <div class="form__result-row form__result-row--2x2">
-      <h4>Iteration no</h4>
-      <h4>x1</h4>
-      <h4>x2</h4>
-    </div>
-    `;
-
-    for (let i = 0; i < numberOfIterations; i++) {
-      const result = calculateValues(i);
-
-      formResult.innerHTML += `
-      <div class="form__result-row form__result-row--2x2">
-        <p>${i}</p>
-        <p>${result[0]}</p>
-        <p>${result[1]}</p>
-      </div>
-      `;
-    }
-
-    formResultContainer.style.display = "flex";
   }
 
-  if (matrixSize === 3) {
-    for (const key in equation_3) {
-      if (
-        !equation_3[key].X1 ||
-        !equation_3[key].X2 ||
-        !equation_3[key].X3 ||
-        !equation_3[key].V1
-      ) {
-        return alert("Please enter full equations!");
+  const isDiagonallyDominant = [];
+  let valuesArray = [];
+  Object.keys(localEquation).forEach((row, index) => {
+    valuesArray = [];
+    for (let i = 1; i <= matrixSize; i++) {
+      if (i === index + 1) {
+        valuesArray.unshift(localEquation[row][`X${i}`]);
+      } else {
+        valuesArray.push(localEquation[row][`X${i}`]);
       }
     }
 
-    const isDiagonallyDominant =
-      checkDiagonalDominance(1, {
-        X1: equation_3.row1.X1,
-        X2: equation_3.row1.X2,
-        X3: equation_3.row1.X3,
-      }) &&
-      checkDiagonalDominance(2, {
-        X1: equation_3.row2.X1,
-        X2: equation_3.row2.X2,
-        X3: equation_3.row2.X3,
-      }) &&
-      checkDiagonalDominance(3, {
-        X1: equation_3.row3.X1,
-        X2: equation_3.row3.X2,
-        X3: equation_3.row3.X3,
-      });
+    isDiagonallyDominant.push(checkDiagonalDominance(valuesArray));
+  });
 
-    if (!isDiagonallyDominant) {
-      return alert("The equations are not diagonally dominant!");
+  if (isDiagonallyDominant.includes(false)) {
+    return alert("The equations are not diagonally dominant!");
+  }
+
+  let variables = {};
+
+  for (let i = 1; i <= matrixSize; i++) {
+    variables[`x${i}`] = 0;
+  }
+
+  const calculateValues = (iterationNum) => {
+    let iterationValues = [];
+    const equation = equationsTypes[`equation_${matrixSize}`];
+
+    for (let i = 1; i <= matrixSize; i++) {
+      let RHS;
+
+      for (let j = 1; j <= matrixSize; j++) {
+        if (i !== j) {
+          RHS = RHS
+            ? RHS -
+              (equation[`row${i}`][`operator${j - 1}`] === "-" ? -1 : +1) *
+                equation[`row${i}`][`X${j}`] *
+                variables[`x${j}`]
+            : -(equation[`row${i}`][`operator${j - 1}`] === "-" ? -1 : +1) *
+              equation[`row${i}`][`X${j}`] *
+              variables[`x${j}`];
+        } else {
+          continue;
+        }
+      }
+
+      variables[`x${i}`] =
+        (equation[`row${i}`].V1 + RHS) /
+        ((equation[`row${i}`][`operator${i - 1}`] === "-" ? -1 : +1) *
+          equation[`row${i}`][`X${i}`]);
+
+      iterationValues.push(variables[`x${i}`]);
     }
 
-    let x1, x2, x3;
+    return iterationValues;
+  };
 
-    const calculateValues = (iterationNum) => {
-      x1 =
-        (equation_3.row1.V1 -
-          (equation_3.row1.operator1 === "-" ? -1 : +1) *
-            equation_3.row1.X2 *
-            (iterationNum === 0 ? iterationNum : x2) -
-          (equation_3.row1.operator2 === "-" ? -1 : +1) *
-            (equation_3.row1.X3 * (iterationNum === 0 ? iterationNum : x3))) /
-        ((equation_3.row1.operator0 === "-" ? -1 : +1) * equation_3.row1.X1);
+  const formResultContainer = document.getElementById("form__result-container");
+  const formResult = document.getElementById("form__result");
 
-      x2 =
-        (equation_3.row2.V1 -
-          (equation_3.row2.operator0 === "-" ? -1 : +1) *
-            equation_3.row2.X1 *
-            x1 -
-          (equation_3.row2.operator2 === "-" ? -1 : +1) *
-            (equation_3.row2.X3 * (iterationNum === 0 ? iterationNum : x3))) /
-        ((equation_3.row2.operator1 === "-" ? -1 : +1) * equation_3.row2.X2);
+  const getHeadings = () => {
+    let headings = "";
+    for (let i = 1; i <= matrixSize; i++) {
+      headings += `<h4>x${i}</h4>`;
+    }
+    return headings;
+  };
 
-      x3 =
-        (equation_3.row3.V1 -
-          (equation_3.row3.operator0 === "-" ? -1 : +1) *
-            equation_3.row3.X1 *
-            x1 -
-          (equation_3.row3.operator1 === "-" ? -1 : +1) *
-            (equation_3.row3.X2 * x2)) /
-        ((equation_3.row3.operator2 === "-" ? -1 : +1) * equation_3.row3.X3);
+  formResult.innerHTML = `
+  <div class="form__result-row form__result-row--${matrixSize}x${matrixSize}">
+    <h4>Iteration no</h4>
+    ${getHeadings()}
+  </div>
+  `;
 
-      return [x1, x2, x3];
+  for (let i = 0; i < numberOfIterations; i++) {
+    const result = calculateValues(i);
+
+    const getResult = () => {
+      let localResult = "";
+      for (let i = 0; i < matrixSize; i++) {
+        localResult += `<p>${result[i]}</p>`;
+      }
+      return localResult;
     };
 
-    const formResultContainer = document.getElementById(
-      "form__result-container"
-    );
-    const formResult = document.getElementById("form__result");
-
-    formResult.innerHTML = `
-    <div class="form__result-row form__result-row--3x3">
-      <h4>Iteration no</h4>
-      <h4>x1</h4>
-      <h4>x2</h4>
-      <h4>x3</h4>
-    </div>
-    `;
-
-    for (let i = 0; i < numberOfIterations; i++) {
-      const result = calculateValues(i);
-
-      formResult.innerHTML += `
-      <div class="form__result-row form__result-row--3x3">
+    formResult.innerHTML += `
+      <div class="form__result-row form__result-row--${matrixSize}x${matrixSize}">
         <p>${i}</p>
-        <p>${result[0]}</p>
-        <p>${result[1]}</p>
-        <p>${result[2]}</p>
+        ${getResult()}
       </div>
       `;
-    }
-
-    formResultContainer.style.display = "flex";
   }
+
+  formResultContainer.style.display = "flex";
 };
 
-const checkDiagonalDominance = (rowNum, values) => {
-  if (matrixSize === 2) {
-    if (rowNum === 1) {
-      return values.X1 >= values.X2;
-    }
-    if (rowNum === 2) {
-      return values.X2 >= values.X1;
-    }
-  }
-  if (matrixSize === 3) {
-    if (rowNum === 1) {
-      return values.X1 >= values.X2 + values.X3;
-    }
-    if (rowNum === 2) {
-      return values.X2 >= values.X1 + values.X3;
-    }
-    if (rowNum === 3) {
-      return values.X3 >= values.X1 + values.X2;
-    }
-  }
+const checkDiagonalDominance = (valuesArray) => {
+  const [diagonalValue, ...restValues] = valuesArray;
+  const sumOfRestValues = restValues.reduce((acc, cur) => acc + cur);
+
+  return diagonalValue >= sumOfRestValues;
 };
