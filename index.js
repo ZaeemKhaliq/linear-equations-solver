@@ -83,6 +83,13 @@ const renderMatrixInputs = () => {
   inputs = "";
   for (let i = 1; i <= matrixSize; i++) {
     inputs += `
+          <select name="equation-input__operator" 
+          class="equation-input__operator"
+          onchange="handleOperatorChange(event,${i},${0},'V')"
+        >
+          <option value="+">+</option>
+          <option value="-">-</option>
+        </select>
         <input type="number" 
             class="equation-input__vector-input__box" 
             onchange="handleVectorInputBox(event,${i})" 
@@ -105,27 +112,13 @@ const renderMatrixInputs = () => {
 const setEquationsObject = () => {
   equations = {};
   for (let i = 1; i <= 10; i++) {
-    Object.defineProperties(equations, {
-      [`equationSpan${i}`]: {
-        value: [],
-        writable: true,
-      },
-      [`equationSpan${i}V1`]: {
-        value: [],
-        writable: true,
-      },
-    });
+    equations[`equationSpan${i}`] = [];
+    equations[`equationSpan${i}V1`] = [];
+    equations[`equationSpan${i}V1Operator0`] = "+";
+
     for (let j = 0; j < 10; j++) {
-      Object.defineProperties(equations, {
-        [`equationSpan${i}X${j + 1}`]: {
-          value: [],
-          writable: true,
-        },
-        [`equationSpan${i}Operator${j}`]: {
-          value: "+",
-          writable: true,
-        },
-      });
+      equations[`equationSpan${i}X${j + 1}`] = [];
+      equations[`equationSpan${i}Operator${j}`] = "+";
     }
   }
 
@@ -137,33 +130,18 @@ const setEquationsObject = () => {
 
   const myObj = equationsTypes[`equation_${matrixSize}`];
   for (let i = 1; i <= matrixSize; i++) {
-    Object.defineProperty(myObj, `row${i}`, {
-      value: {},
-      writable: true,
-      configurable: true,
-      enumerable: true,
-    });
+    myObj[`row${i}`] = {};
   }
 
   for (let i = 1; i <= matrixSize; i++) {
     const key = equationsTypes[`equation_${matrixSize}`][`row${i}`];
 
-    Object.defineProperty(key, "V1", {
-      value: null,
-      writable: true,
-    });
+    key[`V1`] = null;
+    key[`V1operator0`] = "+";
 
     for (let j = 1; j <= matrixSize; j++) {
-      Object.defineProperties(key, {
-        [`X${j}`]: {
-          value: null,
-          writable: true,
-        },
-        [`operator${j - 1}`]: {
-          value: equations[`equationSpan${i}Operator${j - 1}`],
-          writable: true,
-        },
-      });
+      key[`X${j}`] = null;
+      key[`operator${j - 1}`] = equations[`equationSpan${i}Operator${j - 1}`];
     }
   }
 };
@@ -178,10 +156,15 @@ const setEquation = (value, rowNum, variableNum, variable) => {
   ] = value === "" ? "" : Number(value);
 };
 
-const setEquationOperator = (rowNum, operatorNum, operator) => {
-  equationsTypes[`equation_${matrixSize}`][`row${rowNum}`][
-    `operator${operatorNum}`
-  ] = operator;
+const setEquationOperator = (rowNum, operatorNum, operator, variableType) => {
+  if (variableType === "V") {
+    equationsTypes[`equation_${matrixSize}`][`row${rowNum}`][`V1operator0`] =
+      operator;
+  } else {
+    equationsTypes[`equation_${matrixSize}`][`row${rowNum}`][
+      `operator${operatorNum}`
+    ] = operator;
+  }
 };
 
 const handleMatrixInputBox = (event, index) => {
@@ -239,11 +222,25 @@ const handleVectorInputBox = (event, index) => {
   }
 };
 
-const handleOperatorChange = (event, spanNumber, operatorNumber) => {
-  equations[`equationSpan${spanNumber}Operator${operatorNumber}`] =
-    event.target.value;
+const handleOperatorChange = (
+  event,
+  spanNumber,
+  operatorNumber,
+  variableType
+) => {
+  if (variableType === "V") {
+    equations[`equationSpan${spanNumber}V1Operator0`] = event.target.value;
+  } else {
+    equations[`equationSpan${spanNumber}Operator${operatorNumber}`] =
+      event.target.value;
+  }
 
-  setEquationOperator(spanNumber, operatorNumber, event.target.value);
+  setEquationOperator(
+    spanNumber,
+    operatorNumber,
+    event.target.value,
+    variableType
+  );
   setEquationSpan(spanNumber);
 };
 
@@ -278,7 +275,11 @@ const setEquationSpan = (spanNumber) => {
   }
 
   const vectorValue = [
-    equations[`equationSpan${spanNumber}V1`].length ? "=" : "",
+    equations[`equationSpan${spanNumber}V1`].length
+      ? "=" +
+        (equations[`equationSpan${spanNumber}V1Operator0`] === "-" ? "-" : "")
+      : "",
+
     ...equations[`equationSpan${spanNumber}V1`],
   ];
 
@@ -308,6 +309,12 @@ const handleNumberOfIteration = (event) => {
 };
 
 const handleSubmit = () => {
+  const formResultContainer = document.getElementById("form__result-container");
+  const formResult = document.getElementById("form__result");
+
+  formResultContainer.style.display = "none";
+  formResult.innerHTML = "";
+
   if (!numberOfIterations) {
     return alert("Please enter number of iterations!");
   }
@@ -375,7 +382,9 @@ const handleSubmit = () => {
       }
 
       variables[`x${i}`] =
-        (equation[`row${i}`].V1 + RHS) /
+        ((equation[`row${i}`][`V1operator0`] === "-" ? -1 : +1) *
+          equation[`row${i}`].V1 +
+          RHS) /
         ((equation[`row${i}`][`operator${i - 1}`] === "-" ? -1 : +1) *
           equation[`row${i}`][`X${i}`]);
 
@@ -384,9 +393,6 @@ const handleSubmit = () => {
 
     return iterationValues;
   };
-
-  const formResultContainer = document.getElementById("form__result-container");
-  const formResult = document.getElementById("form__result");
 
   const getHeadings = () => {
     let headings = "";

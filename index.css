@@ -117,51 +117,51 @@
   display: grid;
   row-gap: 1rem;
   justify-items: center;
-  justify-self: start;
+  align-items: center;
 }
 
 .equation-input__vector-input--size-2 {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
 }
 
 .equation-input__vector-input--size-3 {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(3, 1fr);
 }
 
 .equation-input__vector-input--size-4 {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(4, 1fr);
 }
 
 .equation-input__vector-input--size-5 {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(5, 1fr);
 }
 
 .equation-input__vector-input--size-6 {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(6, 1fr);
 }
 
 .equation-input__vector-input--size-7 {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(7, 1fr);
 }
 
 .equation-input__vector-input--size-8 {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(8, 1fr);
 }
 
 .equation-input__vector-input--size-9 {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(9, 1fr);
 }
 
 .equation-input__vector-input--size-10 {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(10, 1fr);
 }
 
