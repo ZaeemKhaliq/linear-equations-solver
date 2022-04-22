@@ -1,6 +1,5 @@
 let matrixSize = 2;
 let equations = {};
-
 let equationsTypes = {
   equation_2: {},
   equation_3: {},
@@ -19,6 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const handleSizeChange = (event) => {
+  const formResultContainer = document.getElementById("form__result-container");
+  const formResult = document.getElementById("form__result");
+
+  formResultContainer.style.display = "none";
+  formResult.innerHTML = "";
+
   matrixSize = Number(event.target.value);
   renderMatrixInputs();
   clearEquationSpans();
@@ -308,6 +313,19 @@ const handleNumberOfIteration = (event) => {
   inputBox.value = numberOfIterations;
 };
 
+let initialApproximations = 0;
+
+const handleInitialApproximations = (event) => {
+  event.target.value
+    ? (initialApproximations = +event.target.value)
+    : (initialApproximations = 0);
+
+  const initialApproximationsBox = document.getElementById(
+    "initial-approximations"
+  );
+  initialApproximationsBox.value = initialApproximations;
+};
+
 const handleSubmit = () => {
   const formResultContainer = document.getElementById("form__result-container");
   const formResult = document.getElementById("form__result");
@@ -356,7 +374,7 @@ const handleSubmit = () => {
   let variables = {};
 
   for (let i = 1; i <= matrixSize; i++) {
-    variables[`x${i}`] = 0;
+    variables[`x${i}`] = initialApproximations;
   }
 
   const calculateValues = (iterationNum) => {

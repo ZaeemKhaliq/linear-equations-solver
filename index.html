@@ -25,10 +25,11 @@
           <label class="form__label">Equation Input:</label>
           <p>Enter input in the form of matrix</p>
           <div class="form__matrix-size-selector">
-            <label for="matrix-size">Select matrix size</label>
+            <label for="matrix-size">Select matrix size:</label>
             <select
               name="matrix-size"
               id="matrix-size"
+              class="form__matrix-size"
               onchange="handleSizeChange(event)"
             >
               <option value="2">2</option>
@@ -42,6 +43,7 @@
               <option value="10">10</option>
             </select>
           </div>
+          <br />
           <div class="equation-input-wrapper">
             <div class="equation-input" id="equation-input">
               <div class="equation-input__matrix-input" id="matrix-input"></div>
@@ -61,6 +63,8 @@
             </div>
           </div>
 
+          <br />
+          <br />
           <label class="form__label" for="num-of-iterations"
             >Number of iterations:
           </label>
@@ -73,6 +77,21 @@
             min="2"
             max="50"
             onchange="handleNumberOfIteration(event)"
+          />
+          <br />
+          <br />
+          <label class="form__label" for="initial-approximations"
+            >Initial Approximations:
+          </label>
+          <br />
+          <p>(Default: 0)</p>
+          <input
+            class="form__input-number"
+            id="initial-approximations"
+            type="number"
+            min="0"
+            value="0"
+            onchange="handleInitialApproximations(event)"
           />
           <br />
           <br />
